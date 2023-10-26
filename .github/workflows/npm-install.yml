@@ -38,16 +38,16 @@ jobs:
         id: install-package
         run: |
           if [ "${{ github.event.inputs.install-latest }}" == "true" ]; then
-            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-latest" >> $GITHUB_OUTPUT
+            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-latest" >> $GITHUB_STATE
             echo "Installing the latest version of ${{ github.event.inputs.package-name }}"
             npm install ${{ github.event.inputs.package-name }}
           else
-            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}" >> $GITHUB_OUTPUT
+            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}" >> $GITHUB_STATE
             echo "Setting package version to ${{ github.event.inputs.package-version }}"
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
 
-      - name: Commit and push changes
+      - name: Echo branch
         run: |
           echo "${{ steps.install-package.outputs.unique_branch }}"
 
