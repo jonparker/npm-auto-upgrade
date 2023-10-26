@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/jonparker/npm-auto-upgrade/issues"
   },
-  "homepage": "https://github.com/jonparker/npm-auto-upgrade#readme"
+  "homepage": "https://github.com/jonparker/npm-auto-upgrade#readme",
+  "dependencies": {
+    "react": "^17.0.2"
+  }
 }
