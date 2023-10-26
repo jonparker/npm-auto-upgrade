@@ -35,13 +35,14 @@ jobs:
         run: npm ci
 
       - name: Install package version
+        id: install-package
         run: |
           if [ "${{ github.event.inputs.install-latest }}" == "true" ]; then
-            unique_branch="package-test-${{ github.event.inputs.package-name }}-latest-$(date +%s)"
+            echo "{unique_branch}={package-test-${{ github.event.inputs.package-name }}-latest-$(date +%s)}" >> $GITHUB_OUTPUT
             echo "Installing the latest version of ${{ github.event.inputs.package-name }}"
             npm install ${{ github.event.inputs.package-name }}
           else
-            unique_branch="package-test-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}-$(date +%s)"
+            echo "{unique_branch}={package-test-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}-$(date +%s)" >> $GITHUB_OUTPUT
             echo "Setting package version to ${{ github.event.inputs.package-version }}"
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
@@ -54,13 +55,13 @@ jobs:
           commit_prefix: "chore: "
           commit_message: "install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
           force: false
-          target_branch: $unique_branch
+          target_branch: ${{ steps.install-package.outputs.unique_branch }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.YOUR_GITHUB_TOKEN }}
-          branch: $unique_branch
+          branch: ${{ steps.install-package.outputs.unique_branch }}
           base: main
           title: "chore: install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
           labels: 'package-test'
