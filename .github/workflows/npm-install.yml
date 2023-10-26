@@ -34,7 +34,7 @@ jobs:
       - name: Install project dependencies
         run: npm ci
 
-      - name: Set package version
+      - name: Install package version
         run: |
           if [ "${{ github.event.inputs.install-latest }}" == "true" ]; then
             unique_branch="package-test-${{ github.event.inputs.package-name }}-latest-$(date +%s)"
@@ -45,12 +45,10 @@ jobs:
             echo "Setting package version to ${{ github.event.inputs.package-version }}"
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
-        working-directory: .
 
       - name: Commit and push changes
         uses: devops-infra/action-commit-push@master
         with:
-          github_token: "${{ secrets.GITHUB_TOKEN }}"
           add_timestamp: true
           commit_prefix: "chore: "
           commit_message: "install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
