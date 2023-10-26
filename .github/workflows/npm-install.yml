@@ -45,7 +45,7 @@ jobs:
             echo "Setting package version to ${{ github.event.inputs.package-version }}"
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
-        working-directory: app
+        working-directory: .
 
       - name: Commit and push changes
         uses: devops-infra/action-commit-push@master
