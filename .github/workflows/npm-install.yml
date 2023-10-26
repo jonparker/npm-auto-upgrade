@@ -38,11 +38,9 @@ jobs:
         id: install-package
         run: |
           if [ "${{ github.event.inputs.install-latest }}" == "true" ]; then
-            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-latest" >> "$GITHUB_ENV"
             echo "Installing the latest version of ${{ github.event.inputs.package-name }}"
             npm install ${{ github.event.inputs.package-name }}
           else
-            echo "{unique_branch}={install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}" >> "$GITHUB_ENV"
             echo "Setting package version to ${{ github.event.inputs.package-version }}"
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
@@ -59,7 +57,7 @@ jobs:
           commit_prefix: "chore: "
           commit_message: "install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
           force: false
-          target_branch: ${{ GITHUB_ENV.unique_branch }}
+          target_branch: "install-package-node-${{ matrix.node-version }}-${{ github.event.inputs.package-name }}-bump"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
