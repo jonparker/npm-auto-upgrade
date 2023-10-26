@@ -48,6 +48,10 @@ jobs:
           fi
 
       - name: Commit and push changes
+        run: |
+          echo "${{ steps.install-package.outputs.unique_branch }}"
+
+      - name: Commit and push changes
         uses: devops-infra/action-commit-push@master
         with:
           github_token: "${{ secrets.GITHUB_TOKEN }}"
