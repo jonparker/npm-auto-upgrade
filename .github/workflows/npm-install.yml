@@ -45,10 +45,6 @@ jobs:
             npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
           fi
 
-      - name: Echo branch
-        run: |
-          echo $unique_branch
-
       - name: Commit and push changes
         uses: devops-infra/action-commit-push@master
         with:
