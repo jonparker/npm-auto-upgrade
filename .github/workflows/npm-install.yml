@@ -1,0 +1,68 @@
+name: Install NPM Package
+
+on:
+  workflow_dispatch:
+    inputs:
+      package-name:
+        description: 'Name of the package to test'
+        required: true
+      package-version:
+        description: 'Package version to test'
+        required: true
+      install-latest:
+        description: 'Install the latest version (true or false)'
+        required: false
+        default: 'false'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16,18,lts,latest]
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install project dependencies
+        run: npm ci
+
+      - name: Set package version
+        run: |
+          if [ "${{ github.event.inputs.install-latest }}" == "true" ]; then
+            unique_branch="package-test-${{ github.event.inputs.package-name }}-latest-$(date +%s)"
+            echo "Installing the latest version of ${{ github.event.inputs.package-name }}"
+            npm install ${{ github.event.inputs.package-name }}
+          else
+            unique_branch="package-test-${{ github.event.inputs.package-name }}-${{ github.event.inputs.package-version }}-$(date +%s)"
+            echo "Setting package version to ${{ github.event.inputs.package-version }}"
+            npm install ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}
+          fi
+        working-directory: app
+
+      - name: Commit and push changes
+        uses: devops-infra/action-commit-push@master
+        with:
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
+          add_timestamp: true
+          commit_prefix: "chore: "
+          commit_message: "install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
+          force: false
+          target_branch: $unique_branch
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.YOUR_GITHUB_TOKEN }}
+          branch: $unique_branch
+          base: main
+          title: "chore: install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
+          labels: 'package-test'
+          body: "This pull request installs the package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
