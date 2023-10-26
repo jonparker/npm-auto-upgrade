@@ -59,7 +59,7 @@ jobs:
           commit_prefix: "chore: "
           commit_message: "install package ${{ github.event.inputs.package-name }}@${{ github.event.inputs.package-version }}"
           force: false
-          target_branch: ${{ $unique_branch }}
+          target_branch: ${{ GITHUB_ENV.unique_branch }}
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
