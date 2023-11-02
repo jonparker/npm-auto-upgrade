@@ -1,4 +1,4 @@
-name: Override .nvmrc File
+name: NPM Install
 
 on:
   pull_request:
