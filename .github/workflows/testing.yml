@@ -1,0 +1,46 @@
+name: NPM Install Dynamic Node
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: "Node.js version for .nvmrc"
+        required: false
+        default: "v16"
+        options:
+          - "v16"
+          - "v18"
+          - "v20"
+
+jobs:
+  npm-install:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set NVMRC
+        if: github.event_name == 'workflow_dispatch'
+        id: set-node-version
+        run: |
+          if [ -n "$NVMRC_VALUE" ]; then
+            echo "{node_version}={$(echo $NVMRC_VALUE | sed 's/^v//')}" >> $GITHUB_STATE
+          else
+            echo "{node_version}={$(cat .nvmrc | sed 's/^v//')}" >> $GITHUB_STATE
+          fi
+        env:
+          NVMRC_VALUE: ${{ github.event.inputs.node_version }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.set-node-version.outputs.node_version }}
+
+      - name: Run npm ci with the specified Node.js version
+        run: |
+          echo "Running npm ci with Node.js version: ${{ steps.set-node-version.outputs.node_version }}"
+          npm ci
