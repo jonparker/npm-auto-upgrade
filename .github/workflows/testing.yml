@@ -15,16 +15,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - id: step1
-        run: echo "name=hello" >> $GITHUB_OUTPUT
-    
-      - id: step2
-        run: echo "name=test::world" >> $GITHUB_OUTPUT
-    
-      - name: Display
-        run: |
-          echo "Step 1 test: ${{ steps.step1.outputs.test }}"
-          echo "Step 2 test: ${{ steps.step1.outputs.test }}"
+      - name: Set color
+        id: color-selector
+        run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
+      - name: Get color
+        env:
+          SELECTED_COLOR: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
+        run: echo "The selected color is $SELECTED_COLOR"
       
       - name: Checkout code
         uses: actions/checkout@v4
