@@ -15,14 +15,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # - name: Set color
-      #   id: color-selector
-      #   run: echo "SELECTED_COLOR=green" >> "$GITHUB_OUTPUT"
-      # - name: Get color
-      #   env:
-      #     SELECTED_COLOR: ${{ steps.color-selector.outputs.SELECTED_COLOR }}
-      #   run: echo "The selected color is $SELECTED_COLOR"
-      
       - name: Checkout code
         uses: actions/checkout@v4
 
@@ -45,7 +37,6 @@ jobs:
 
       - name: Run npm ci with the specified Node.js version
         run: |
-          echo "${{ env.node_version }}"
           echo "Running npm ci with Node.js version: $NODE_VERSION"
           npm ci
         env:
