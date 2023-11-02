@@ -1,4 +1,4 @@
-name: Test
+name: Override .nvmrc File
 
 on:
   pull_request:
@@ -7,44 +7,53 @@ on:
   workflow_dispatch:
     inputs:
       node_version:
-        description: 'Node.js version for .nvmrc'
+        description: "Node.js version for .nvmrc"
         required: false
-        default: 'v16'
+        default: "v16"
         options:
-          - 'v16'
-          - 'v18'
-          - 'v20'
+          - "v16"
+          - "v18"
+          - "v20"
 
 jobs:
-  override-nvmrc:
+  npm-install:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set NVMRC
-      if: github.event_name == 'workflow_dispatch'
-      id: set-nvmrc
-      run: |
-        if [ -n "$NVMRC_VALUE" ]; then
-          echo "$NVMRC_VALUE" > .nvmrc
-          echo "::set-output name=nvmrc_set::true"
-        else
-          echo "::set-output name=nvmrc_set::false"
-        fi
-      env:
-        NVMRC_VALUE: ${{ github.event.inputs.node_version }}
+      - name: Set NVMRC
+        if: github.event_name == 'workflow_dispatch'
+        id: set-nvmrc
+        run: |
+          if [ -n "$NVMRC_VALUE" ]; then
+            echo "$NVMRC_VALUE" > .nvmrc
+            echo "::set-output name=nvmrc_set::true"
+          else
+            echo "::set-output name=nvmrc_set::false"
+          fi
+        env:
+          NVMRC_VALUE: ${{ github.event.inputs.node_version }}
 
-    - name: Use NVMRC in next step
-      if: steps.set-nvmrc.outputs.nvmrc_set == 'true'
-      id: pass-nvmrc
-      run: |
-        echo "NVMRC content: $(cat .nvmrc)"
-        export NVMRC_CONTENT=$(cat .nvmrc)
-        nvm install "$NVMRC_CONTENT"
+      - name: Use NVMRC from checked out branch
+        if: github.event_name != 'workflow_dispatch'
+        id: pass-nvmrc
+        run: |
+          echo "NVMRC content: $(cat .nvmrc)"
+          echo "::set-output name=node_version::$(cat .nvmrc)"
 
-    - name: Run npm ci with the specified Node.js version
-      run: |
-        nvm use "$NVMRC_CONTENT"
-        npm ci
+      - name: Setup Node.js
+        if: steps.set-nvmrc.outputs.nvmrc_set == 'true' && github.event_name == 'workflow_dispatch'
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.set-nvmrc.outputs.node_version }}
+
+      - name: Setup Node.js from .nvmrc
+        if: steps.pass-nvmrc.outputs.node_version != '' && github.event_name != 'workflow_dispatch'
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ steps.pass-nvmrc.outputs.node_version }}
+
+      - name: Run npm ci with the specified Node.js version
+        run: npm ci
