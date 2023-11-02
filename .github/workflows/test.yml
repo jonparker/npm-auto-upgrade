@@ -39,9 +39,9 @@ jobs:
         run: |
           if [ -n "$NVMRC_VALUE" ]; then
             echo "$NVMRC_VALUE" > .nvmrc
-            echo "::set-output name=nvmrc_set::true"
+            echo "{nvmrc_set}={true}" >> $GITHUB_STATE
           else
-            echo "::set-output name=nvmrc_set::false"
+            echo "{nvmrc_set}={false}" >> $GITHUB_STATE
           fi
         env:
           NVMRC_VALUE: ${{ github.event.inputs.node_version }}
@@ -51,7 +51,7 @@ jobs:
         id: pass-nvmrc
         run: |
           echo "NVMRC content: $(cat .nvmrc)"
-          echo "::set-output name=node_version::$(cat .nvmrc)"
+          echo "{node_version}={$(cat .nvmrc)}" >> $GITHUB_STATE
 
       - name: Setup Node.js
         if: steps.set-nvmrc.outputs.nvmrc_set == 'true' && github.event_name == 'workflow_dispatch'
