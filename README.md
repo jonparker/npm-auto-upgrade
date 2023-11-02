@@ -1,4 +1,4 @@
-# Testing with different node versions
+# A Github Workflow for testing with different node versions
 
 This repo demonstrates setting up a workflow with a dynamic version of Node as well as defaulting to the version in the `.nvmrc` for PRs.
 
