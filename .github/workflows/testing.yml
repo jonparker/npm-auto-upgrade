@@ -19,7 +19,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Set NVMRC
-        if: github.event_name == 'workflow_dispatch'
         id: set-node-version
         run: |
           if [ -n "$NVMRC_VALUE" ]; then
