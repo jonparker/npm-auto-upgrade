@@ -9,7 +9,6 @@ on:
       node_version:
         description: "Node.js version for .nvmrc"
         required: false
-        default: "v16"
         options:
           - "v16"
           - "v18"
