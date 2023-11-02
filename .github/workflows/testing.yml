@@ -37,7 +37,5 @@ jobs:
 
       - name: Run npm ci with the specified Node.js version
         run: |
-          echo "Running npm ci with Node.js version: $env.{node_version} $env.node_version ${{ env.node_version }} {node_version} $NODE_VERSION {env.node_version}"
+          echo "Running npm ci with Node.js version: $env ${{ env.node_version }} {node_version} $NODE_VERSION {env.node_version}"
           npm ci
-        env:
-          NODE_VERSION: ${{ env.node_version }}
