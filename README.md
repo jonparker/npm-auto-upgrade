@@ -9,3 +9,7 @@ Action: https://github.com/jonparker/npm-auto-upgrade/actions/workflows/testing.
 <img width="398" alt="image" src="https://github.com/jonparker/npm-auto-upgrade/assets/152131/77dd8b2c-fba3-438b-8e6a-73f24ec6d8e8">
 
 Otherwise when triggered by a PR it will run with the version in the `.nvmrc` file.
+
+## Example from a PR
+
+<img width="643" alt="image" src="https://github.com/jonparker/npm-auto-upgrade/assets/152131/c51ee9a9-0612-453e-a7ee-e0bfa0496be3">
