@@ -66,4 +66,6 @@ jobs:
           node-version: ${{ steps.pass-nvmrc.outputs.node_version }}
 
       - name: Run npm ci with the specified Node.js version
-        run: npm ci
+        run: |
+          echo "Running npm ci with Node.js version: ${{ steps.setup-node-from-nvmrc.outputs.node_version }}"
+          npm ci
