@@ -7,12 +7,8 @@ on:
   workflow_dispatch:
     inputs:
       node_version:
-        description: "Node.js version (e.g. 16, 18, 20)"
+        description: "Node.js version (e.g. v16, v18, v20)"
         required: false
-        options:
-          - "16"
-          - "18"
-          - "20"
 
 jobs:
   npm-install:
@@ -27,9 +23,9 @@ jobs:
         id: set-node-version
         run: |
           if [ -n "$NVMRC_VALUE" ]; then
-            echo "{node_version}={$(echo $NVMRC_VALUE | sed 's/^v//')}" >> $GITHUB_ENV
+            echo "{node_version}={$(echo $NVMRC_VALUE)}" >> $GITHUB_ENV
           else
-            echo "{node_version}={$(cat .nvmrc | sed 's/^v//')}" >> $GITHUB_ENV
+            echo "{node_version}={$(cat .nvmrc)}" >> $GITHUB_ENV
           fi
         env:
           NVMRC_VALUE: ${{ github.event.inputs.node_version }}
@@ -41,5 +37,5 @@ jobs:
 
       - name: Run npm ci with the specified Node.js version
         run: |
-          echo "Running npm ci with Node.js version: ${{ env.node_version }}"
+          echo "Running npm ci with Node.js version: $env.node_version"
           npm ci
