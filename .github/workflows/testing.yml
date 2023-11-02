@@ -27,9 +27,9 @@ jobs:
         id: set-node-version
         run: |
           if [ -n "$NVMRC_VALUE" ]; then
-            echo "{node_version}={$(echo $NVMRC_VALUE | sed 's/^v//')}" >> $GITHUB_STATE
+            echo "{node_version}={$(echo $NVMRC_VALUE | sed 's/^v//')}" >> $GITHUB_ENV
           else
-            echo "{node_version}={$(cat .nvmrc | sed 's/^v//')}" >> $GITHUB_STATE
+            echo "{node_version}={$(cat .nvmrc | sed 's/^v//')}" >> $GITHUB_ENV
           fi
         env:
           NVMRC_VALUE: ${{ github.event.inputs.node_version }}
@@ -37,9 +37,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ steps.set-node-version.outputs.node_version }}
+          node-version: ${{ env.node_version }}
 
       - name: Run npm ci with the specified Node.js version
         run: |
-          echo "Running npm ci with Node.js version: ${{ steps.set-node-version.outputs.node_version }}"
+          echo "Running npm ci with Node.js version: ${{ env.node_version }}"
           npm ci
