@@ -1,0 +1,50 @@
+name: Test
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      node_version:
+        description: 'Node.js version for .nvmrc'
+        required: false
+        default: 'v16'
+        options:
+          - 'v16'
+          - 'v18'
+          - 'v20'
+
+jobs:
+  override-nvmrc:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set NVMRC
+      if: github.event_name == 'workflow_dispatch'
+      id: set-nvmrc
+      run: |
+        if [ -n "$NVMRC_VALUE" ]; then
+          echo "$NVMRC_VALUE" > .nvmrc
+          echo "::set-output name=nvmrc_set::true"
+        else
+          echo "::set-output name=nvmrc_set::false"
+        fi
+      env:
+        NVMRC_VALUE: ${{ github.event.inputs.node_version }}
+
+    - name: Use NVMRC in next step
+      if: steps.set-nvmrc.outputs.nvmrc_set == 'true'
+      id: pass-nvmrc
+      run: |
+        echo "NVMRC content: $(cat .nvmrc)"
+        export NVMRC_CONTENT=$(cat .nvmrc)
+        nvm install "$NVMRC_CONTENT"
+
+    - name: Run npm ci with the specified Node.js version
+      run: |
+        nvm use "$NVMRC_CONTENT"
+        npm ci
