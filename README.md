@@ -13,3 +13,7 @@ Otherwise when triggered by a PR it will run with the version in the `.nvmrc` fi
 ## Example from a PR
 
 <img width="643" alt="image" src="https://github.com/jonparker/npm-auto-upgrade/assets/152131/c51ee9a9-0612-453e-a7ee-e0bfa0496be3">
+
+## Github App
+
+Note this repository has a Github App installed
